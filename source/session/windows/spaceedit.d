@@ -54,16 +54,18 @@ private:
 
     string[string][Adaptor] options;
 
+    void adaptorDelete(size_t idx) {
+        // stop source on delete
+        if (editingZone.sources[idx]) editingZone.sources[idx].stop();
+        editingZone.sources = editingZone.sources.remove(idx);
+    }
+
     void adaptorMenu(size_t idx) {
         uiImRightClickPopup("AdaptorPopup");
 
         if (uiImBeginPopup("AdaptorPopup")) {
-            if (uiImMenuItem(__("Delete"))) {
-
-                // stop source on delete
-                if (editingZone.sources[idx]) editingZone.sources[idx].stop();
-                editingZone.sources = editingZone.sources.remove(idx);
-            }
+            if (uiImMenuItem(__("Delete")))
+                adaptorDelete(idx);
             uiImEndPopup();
         }
     }
@@ -248,6 +250,10 @@ public:
                                                 }
                                             }
 
+                                            // Expose the delete button to make sure users notice it.
+                                            uiImSameLine(0, 40);
+                                            if (uiImButton(__("Delete")))
+                                                adaptorDelete(i);
                                         uiImUnindent();
                                     } else {
                                         adaptorMenu(i);
